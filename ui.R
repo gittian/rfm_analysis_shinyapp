@@ -58,20 +58,14 @@ shinyUI(fluidPage(theme = "bootstrap.css",
                            br(),
                            p(downloadButton('downloadData1','Download Example Data 1 (works only in browser)')),
                            p(downloadButton('downloadData2','Download Example Segment 1 (works only in browser)')),
-                           p(downloadButton('downloadData3','Download Example Data 2 (works only in browser)')),
-                           p(downloadButton('downloadData4','Download Example Segment 2 (works only in browser)')),
                            p("Please note that download will not work with RStudio interface. Download will work only in web-browsers. So open this app in a web-browser and then download the example file. For opening this app in web-browser click on \"Open in Browser\" as shown below -"),
                            img(src = "example1.png")
                            ),
                   
-                  tabPanel("Frequency table",
+                  tabPanel("Score metrics",
                            tags$style(type = "text/css", 
                                       "#freqDist {height: calc(100vh - 150px) !important;}"),
-                           plotOutput("freqDist")),
-                  
-                  tabPanel("RFM Score histogram",
-                           tags$style(type = "text/css", 
-                                      "#scoreHist {height: calc(100vh - 150px) !important;}"),
+                           plotOutput("freqDist"),
                            plotOutput("scoreHist")),
                   
                   tabPanel("RFM output",
@@ -89,10 +83,9 @@ shinyUI(fluidPage(theme = "bootstrap.css",
                            fluidRow("",
                                     downloadButton('downloadSegmentData', 
                                                    'Download Segmention data'),
-                                    splitLayout(
-                                      cellWidths = c("50%","50%"),
-                                      plotOutput("segment1"),
-                                      plotOutput("segment2"))
+                                    plotOutput("segment1",width = "70%"),
+                                    plotOutput("segment2",width = "70%"),
+                                    plotOutput("segment3",width = "70%")
                                     )
                            
                           )

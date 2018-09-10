@@ -13,8 +13,7 @@ shinyServer(function(input, output) {
   output$freqDist <- renderPlot({
     req(input$data)
     data <- read.csv(input$data$datapath)
-    hist(data[,2], breaks=50, xlab="Days since last visit", ylab="Frequency in the dataset")
-    
+    hist(data[,2], breaks=50, main="Histogram of recency", xlab="Days since last visit", ylab="Frequency in the dataset")
   })
   
   output$scoreHist <- renderPlot({
@@ -178,14 +177,14 @@ shinyServer(function(input, output) {
       arrange(desc(n)) %>%
       rename(Segment = segment, Count = n)
     
-    segment_data <- data.frame(rfm_segments[,2],rfm_score,rfm_segments[,1],rfm_segments[,3],rfm_segments[,5])
+    segment_data <- data.frame(rfm_segments[,2],rfm_score,rfm_segments[,1],rfm_segments[,3],rfm_segments[,5],rfm_segments[,4])
     
     return (segment_data)
   }
   
   segment <- reactive({
     val = segmentGenerator()
-    colnames(val) = c("customer_id","rfm_score","segment","recency_days","revenue")
+    colnames(val) = c("customer_id","rfm_score","segment","recency_days","revenue","frequency")
     return(val)
   })
   
@@ -249,6 +248,33 @@ shinyServer(function(input, output) {
 
   })
   
+  output$segment3 <-renderPlot({
+    analysis_date <- lubridate::as_date('2007-01-01', tz = 'UTC')
+    req(input$segmentData)
+    rfm_segments = read.csv(input$segmentData$datapath)
+    
+    # Median Monetary Value
+    data <-
+      rfm_segments %>%
+      group_by(segment) %>%
+      dplyr::select(segment, frequency) %>%
+      summarize(median(frequency)) %>%
+      rename(segment = segment, avg_frequency = `median(frequency)`) %>%
+      arrange(avg_frequency)
+    
+    n_fill <- nrow(data)
+    
+    ggplot(data, aes(segment, avg_frequency)) +
+      geom_bar(stat = "identity", fill = brewer.pal(n = n_fill, name = "Set1")) +
+      xlab("Segment") + ylab("Median Frequency Value") +
+      ggtitle("Median Frequency Value by Segment") +
+      coord_flip() +
+      theme(
+        plot.title = element_text(hjust = 0.5)
+      )
+    
+  })
+  
   output$downloadData1 <- downloadHandler(
     filename = function(){ "Example1.csv" },
     content = function(file){
@@ -260,20 +286,6 @@ shinyServer(function(input, output) {
     filename = function(){"Segment1.csv"},
     content = function(file){
       write.csv(read.csv("data/Segment1.csv"),file,row.names = F)
-    }
-  )
-  
-  output$downloadData3 <- downloadHandler(
-    filename = function(){"Example2.csv"},
-    content = function(file){
-      write.csv(read.csv("data/Example2.csv"),file,row.names = F)
-    }
-  )
-  
-  output$downloadData4 <- downloadHandler(
-    filename = function(){"Segment2.csv"},
-    content = function(file){
-      write.csv(read.csv("data/Segment2.csv"),file,row.names = F)
     }
   )
   
