@@ -275,14 +275,14 @@ shinyServer(function(input, output) {
     data <-
       rfm_segments %>%
       group_by(segment) %>%
-      dplyr::select(segment, freq) %>%
-      summarize(median(freq)) %>%
-      rename(segment = segment, avg_freq = `median(freq)`) %>%
-      arrange(avg_freq)
+      dplyr::select(segment, frequency) %>%
+      summarize(median(frequency)) %>%
+      rename(segment = segment, avg_frequency = `median(frequency)`) %>%
+      arrange(avg_frequency)
     
     n_fill <- nrow(data)
     
-    ggplot(data, aes(segment, avg_freq)) +
+    ggplot(data, aes(segment, avg_frequency)) +
       geom_bar(stat = "identity", fill = brewer.pal(n = n_fill, name = "Set1")) +
       xlab("Segment") + ylab("Median Frequency Value") +
       ggtitle("Median Frequency Value by Segment") +
