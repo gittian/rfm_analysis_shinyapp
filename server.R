@@ -35,7 +35,9 @@ shinyServer(function(input, output) {
                                     names(data)[2], 
                                     names(data)[4], 
                                     analysis_date,
-                                    recency_bins = input$bins, frequency_bins = input$bins, monetary_bins = input$bins)    # 0.10 secs
+                                    recency_bins = input$bins, 
+                                    frequency_bins = input$bins, 
+                                    monetary_bins = input$bins)    # 0.10 secs
   
     rfm_score = rfm_result$rfm$rfm_score; rfm_score[1:10]
     hist(rfm_score, breaks=20)  # pfft. Drop.
@@ -52,7 +54,9 @@ shinyServer(function(input, output) {
 	                                   names(data)[2], 
 	                                   names(data)[4], 
 	                                   analysis_date,
-	                                   recency_bins = input$bins, frequency_bins = input$bins, monetary_bins = input$bins)    # 0.10 secs
+	                                   recency_bins = input$bins, 
+	                                   frequency_bins = input$bins, 
+	                                   monetary_bins = input$bins)    # 0.10 secs
     # Heat map output
     rfm_heatmap(rfm_result)
   
@@ -69,7 +73,9 @@ shinyServer(function(input, output) {
 	                                   names(data)[2], 
 	                                   names(data)[4], 
 	                                   analysis_date,
-	                                   recency_bins = input$bins, frequency_bins = input$bins, monetary_bins = input$bins)    # 0.10 secs
+	                                   recency_bins = input$bins, 
+	                                   frequency_bins = input$bins, 
+	                                   monetary_bins = input$bins)    # 0.10 secs
     # bar chart output
     rfm_bar_chart(rfm_result)
   
@@ -86,7 +92,9 @@ shinyServer(function(input, output) {
 	                                   names(data)[2], 
 	                                   names(data)[4], 
 	                                   analysis_date,
-	                                   recency_bins = input$bins, frequency_bins = input$bins, monetary_bins = input$bins)    # 0.10 secs
+	                                   recency_bins = input$bins, 
+	                                   frequency_bins = input$bins, 
+	                                   monetary_bins = input$bins)    # 0.10 secs
     # histogram output
     rfm_histograms(rfm_result)
     
@@ -103,7 +111,9 @@ shinyServer(function(input, output) {
 	                                   names(data)[2], 
 	                                   names(data)[4], 
 	                                   analysis_date,
-	                                   recency_bins = input$bins, frequency_bins = input$bins, monetary_bins = input$bins)    # 0.10 secs
+	                                   recency_bins = input$bins, 
+	                                   frequency_bins = input$bins, 
+	                                   monetary_bins = input$bins)    # 0.10 secs
     rfm_order_dist(rfm_result)
   
   })
@@ -119,7 +129,9 @@ shinyServer(function(input, output) {
 	                                   names(data)[2], 
 	                                   names(data)[4], 
 	                                   analysis_date,
-	                                   recency_bins = input$bins, frequency_bins = input$bins, monetary_bins = input$bins)    # 0.10 secs
+	                                   recency_bins = input$bins, 
+	                                   frequency_bins = input$bins, 
+	                                   monetary_bins = input$bins)    # 0.10 secs
     # recency vs freq scatterplot
     rfm_rf_plot(rfm_result)
   })
@@ -142,7 +154,9 @@ shinyServer(function(input, output) {
                                      names(data)[2], 
                                      names(data)[4], 
                                      analysis_date,
-                                     recency_bins = input$bins, frequency_bins = input$bins, monetary_bins = input$bins)    # 0.10 secs
+                                     recency_bins = input$bins, 
+                                     frequency_bins = input$bins, 
+                                     monetary_bins = input$bins)    # 0.10 secs
     rfm_order_dist(rfm_result)
     
     rfm_score = rfm_result$rfm$rfm_score; rfm_score[1:10]
@@ -177,14 +191,18 @@ shinyServer(function(input, output) {
       arrange(desc(n)) %>%
       rename(Segment = segment, Count = n)
     
-    segment_data <- data.frame(rfm_segments[,2],rfm_score,rfm_segments[,1],rfm_segments[,3],rfm_segments[,5],rfm_segments[,4])
+    segment_data <- data.frame(rfm_segments[,2],
+                               rfm_score,rfm_segments[,1],
+                               rfm_segments[,3],
+                               rfm_segments[,5],
+                               rfm_segments[,4])
     
     return (segment_data)
   }
   
   segment <- reactive({
     val = segmentGenerator()
-    colnames(val) = c("customer_id","rfm_score","segment","recency_days","revenue","frequency")
+    colnames(val) = c("customer_id","rfm_score","segment","recency_days","revenue","freq")
     return(val)
   })
   
@@ -205,7 +223,7 @@ shinyServer(function(input, output) {
 	    group_by(segment) %>%
 	    dplyr::select(segment, recency_days) %>%
 	    summarize(median(recency_days)) %>%
-	    rename(segment = segment, avg_recency = `median(recency_days)`) %>%
+	    dplyr::rename(segment = segment, avg_recency = `median(recency_days)`) %>%
 	    arrange(avg_recency)
 
 	  n_fill <- nrow(data)
@@ -257,14 +275,14 @@ shinyServer(function(input, output) {
     data <-
       rfm_segments %>%
       group_by(segment) %>%
-      dplyr::select(segment, frequency) %>%
-      summarize(median(frequency)) %>%
-      rename(segment = segment, avg_frequency = `median(frequency)`) %>%
-      arrange(avg_frequency)
+      dplyr::select(segment, freq) %>%
+      summarize(median(freq)) %>%
+      rename(segment = segment, avg_freq = `median(freq)`) %>%
+      arrange(avg_freq)
     
     n_fill <- nrow(data)
     
-    ggplot(data, aes(segment, avg_frequency)) +
+    ggplot(data, aes(segment, avg_freq)) +
       geom_bar(stat = "identity", fill = brewer.pal(n = n_fill, name = "Set1")) +
       xlab("Segment") + ylab("Median Frequency Value") +
       ggtitle("Median Frequency Value by Segment") +
