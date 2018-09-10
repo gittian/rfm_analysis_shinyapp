@@ -202,7 +202,7 @@ shinyServer(function(input, output) {
   
   segment <- reactive({
     val = segmentGenerator()
-    colnames(val) = c("customer_id","rfm_score","segment","recency_days","revenue","freq")
+    colnames(val) = c("customer_id","rfm_score","segment","recency_days","revenue","frequency")
     return(val)
   })
   
