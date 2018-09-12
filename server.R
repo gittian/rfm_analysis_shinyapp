@@ -225,6 +225,7 @@ shinyServer(function(input, output) {
     req(input$segmentData)
     
 	  segments = read.csv(input$segmentData$datapath)
+	  segment_data = segmentGenerator()
 	  rfm_segments = merge(segment_data,segments,by="rfm_score")
 	  rfm_segments$segment.x <- NULL
 	  colnames(rfm_segments)[6] <- "segment"
@@ -256,6 +257,7 @@ shinyServer(function(input, output) {
     req(input$segmentData)
     
     segments = read.csv(input$segmentData$datapath)
+    segment_data = segmentGenerator()
     rfm_segments = merge(segment_data,segments,by="rfm_score")
     rfm_segments$segment.x <- NULL
     colnames(rfm_segments)[6] <- "segment"
@@ -287,6 +289,7 @@ shinyServer(function(input, output) {
     req(input$segmentData)
     
     segments = read.csv(input$segmentData$datapath)
+    segment_data = segmentGenerator()
     rfm_segments = merge(segment_data,segments,by="rfm_score")
     rfm_segments$segment.x <- NULL
     colnames(rfm_segments)[6] <- "segment"
