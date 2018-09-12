@@ -197,12 +197,19 @@ shinyServer(function(input, output) {
                                rfm_segments[,5],
                                rfm_segments[,4])
     
+    colnames(segment_data) = c("customer_id",
+                               "rfm_score",
+                               "segment",
+                               "recency_days",
+                               "revenue",
+                               "frequency")
     return (segment_data)
   }
   
   segment <- reactive({
     val = segmentGenerator()
-    colnames(val) = c("customer_id","rfm_score","segment","recency_days","revenue","frequency")
+    val = unique(val[,2:3])
+    colnames(val) = c("rfm_score","segment")
     return(val)
   })
   
@@ -216,7 +223,12 @@ shinyServer(function(input, output) {
   output$segment1 <-renderPlot({
     analysis_date <- lubridate::as_date('2007-01-01', tz = 'UTC')
     req(input$segmentData)
-	  rfm_segments = read.csv(input$segmentData$datapath)
+    
+	  segments = read.csv(input$segmentData$datapath)
+	  rfm_segments = merge(segment_data,segments,by="rfm_score")
+	  rfm_segments$segment.x <- NULL
+	  colnames(rfm_segments)[6] <- "segment"
+	  
 	  # median recency
 	  data <-
 	    rfm_segments %>% # data_frame() %>%
@@ -242,7 +254,11 @@ shinyServer(function(input, output) {
   output$segment2 <-renderPlot({
     analysis_date <- lubridate::as_date('2007-01-01', tz = 'UTC')
     req(input$segmentData)
-    rfm_segments = read.csv(input$segmentData$datapath)
+    
+    segments = read.csv(input$segmentData$datapath)
+    rfm_segments = merge(segment_data,segments,by="rfm_score")
+    rfm_segments$segment.x <- NULL
+    colnames(rfm_segments)[6] <- "segment"
 
 	  # Median Monetary Value
 	  data <-
@@ -269,7 +285,11 @@ shinyServer(function(input, output) {
   output$segment3 <-renderPlot({
     analysis_date <- lubridate::as_date('2007-01-01', tz = 'UTC')
     req(input$segmentData)
-    rfm_segments = read.csv(input$segmentData$datapath)
+    
+    segments = read.csv(input$segmentData$datapath)
+    rfm_segments = merge(segment_data,segments,by="rfm_score")
+    rfm_segments$segment.x <- NULL
+    colnames(rfm_segments)[6] <- "segment"
     
     # Median Monetary Value
     data <-
